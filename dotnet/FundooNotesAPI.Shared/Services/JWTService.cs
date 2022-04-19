@@ -45,14 +45,14 @@ namespace FundooNotesAPI.Shared.Services
             JWTValidation validationResponse = new JWTValidation();
 
             // Check if we have a header.
-            if (!request.Headers.ContainsKey("Authorization"))
+            if (!request.Headers.ContainsKey("token"))
             {
                 validationResponse.IsValid = false;
 
                 return validationResponse;
             }
 
-            string authorizationHeader = request.Headers["Authorization"];
+            string authorizationHeader = request.Headers["token"];
 
             // Check if the value is empty.
             if (string.IsNullOrEmpty(authorizationHeader))
@@ -87,7 +87,7 @@ namespace FundooNotesAPI.Shared.Services
             }
 
             // Check if we have user claim.
-            if (!claims.ContainsKey("username"))
+            if (!claims.ContainsKey("UserId"))
             {
                 validationResponse.IsValid = false;
 

@@ -12,6 +12,7 @@ namespace FundooNotesAPI.Shared.Services
     {
 
         private readonly IJWTService _jWTService;
+        ISettingsService _settingsService;
 
         // Cosmos DocDB API database
         private string _docDbEndpointUri;
@@ -22,26 +23,28 @@ namespace FundooNotesAPI.Shared.Services
         private string _docDbDigitalMainCollectionName;
 
         private static CosmosClient _docDbSingletonClient;
-        private readonly Lazy<Task<Container>> _cosmosContainer;
+        private readonly Container _cosmosContainer;
 
 
         
         public UserService(IJWTService jWTService, ISettingsService settingsService)
         {
+            _settingsService = settingsService;
             _jWTService = jWTService;
-            _docDbEndpointUri = settingsService.GetDocDbEndpointUri();
-            _docDbPrimaryKey = settingsService.GetDocDbApiKey();
+            _docDbEndpointUri = _settingsService.GetDocDbEndpointUri();
+            _docDbPrimaryKey = _settingsService.GetDocDbApiKey();
 
-            _docDbDatabaseName = settingsService.GetDocDbFundooNotesDatabaseName();
-            _docDbDigitalMainCollectionName = settingsService.GetDocDbMainCollectionName();
-
-            _cosmosContainer = new Lazy<Task<Container>>(async () =>
+            _docDbDatabaseName = _settingsService.GetDocDbFundooNotesDatabaseName();
+            _docDbDigitalMainCollectionName = _settingsService.GetDocDbMainCollectionName();
+            _docDbSingletonClient = new CosmosClient(_settingsService.GetDocDbEndpointUri(), settingsService.GetDocDbApiKey());
+            _cosmosContainer = _docDbSingletonClient.GetContainer(_docDbDatabaseName, _docDbDigitalMainCollectionName);
+            /*_cosmosContainer = new Lazy<Task<Container>>(async () =>
             {
                 var cosmos = new CosmosClient(settingsService.GetDocDbEndpointUri(), settingsService.GetDocDbApiKey());
                 var db = cosmos.GetDatabase(settingsService.GetDocDbFundooNotesDatabaseName());
                 //TODO: Hardcoded partition key field here
                 return await db.CreateContainerIfNotExistsAsync(settingsService.GetDocDbMainCollectionName(),"/email");
-            });
+            });*/
         }
 
         //**** PRIVATE METHODS ****//
@@ -49,7 +52,7 @@ namespace FundooNotesAPI.Shared.Services
         {
             return Environment.GetEnvironmentVariable(name, EnvironmentVariableTarget.Process);
         }
-        private Task<Container> GetCosmosContainer() => _cosmosContainer.Value;
+        // private Task<Container> GetCosmosContainer() => _cosmosContainer.Value;
 
         #region Get All Users
         public async Task<List<FundooUser>> GetUsers()
@@ -59,7 +62,7 @@ namespace FundooNotesAPI.Shared.Services
                 if (string.IsNullOrEmpty(_docDbDigitalMainCollectionName))
                     throw new Exception("No Digital Main collection defined!");
 
-                using (var query = (await GetCosmosContainer()).GetItemLinqQueryable<FundooUser>()
+                using (var query = _cosmosContainer.GetItemLinqQueryable<FundooUser>()
                                 .OrderByDescending(e => e.RegisteredAt)
                                 .ToFeedIterator())
                 {
@@ -92,7 +95,7 @@ namespace FundooNotesAPI.Shared.Services
 
             try
             {
-                using (var response = (await GetCosmosContainer()).CreateItemAsync(newUserDetails, new PartitionKey(newUserDetails.Email)))
+                using (var response = _cosmosContainer.CreateItemAsync(newUserDetails, new PartitionKey(newUserDetails.Email)))
                 {
                     return response.Result.Resource;
                 }
@@ -117,10 +120,14 @@ namespace FundooNotesAPI.Shared.Services
                 if (string.IsNullOrEmpty(_docDbDigitalMainCollectionName))
                     throw new Exception("No Digital Main collection defined!");
 
-                // NOTE: ReadDocumentAsync is really fast in Cosmos as it bypasses all indexing...but it requires the doc ID
-                var docId = $"{userLoginDetails.Email}-{_docDbDigitalMainCollectionName}";
-
-                var user = await (await GetCosmosContainer()).ReadItemAsync<FundooUser>(docId, new PartitionKey(userLoginDetails.Email));
+                var user = _cosmosContainer.GetItemLinqQueryable<FundooUser>(true)
+                     .Where(u => u.Email == userLoginDetails.Email)
+                     .AsEnumerable()
+                     .FirstOrDefault();
+                if (user == null)
+                {
+                    return null;
+                }
                 loginResponse.UserDetails = user;
                 loginResponse.token = _jWTService.GetJWT(loginResponse.UserDetails.UserId, loginResponse.UserDetails.Email);
                 return loginResponse;

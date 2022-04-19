@@ -34,9 +34,9 @@ namespace FundooNotesAPI.AzureFunctions.Users
         [OpenApiOperation(operationId: "UserRegistration", tags: new[] { "Registration" })]
         [OpenApiSecurity("function_key", SecuritySchemeType.ApiKey, Name = "email", In = OpenApiSecurityLocationType.Query)]
         [OpenApiRequestBody(contentType: "application/json", bodyType: typeof(FundooUser), Required = true, Description = "New user details.")]
-        [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "application/json", bodyType: typeof(string), Description = "The OK response")]
+        [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "application/json", bodyType: typeof(FundooUser), Description = "The OK response")]
         public async Task<IActionResult> UserRegistration(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "user/registration")] HttpRequest req)
+            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "users")] HttpRequest req)
         {
             string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
             dynamic data = JsonConvert.DeserializeObject<FundooUser>(requestBody);
@@ -51,7 +51,7 @@ namespace FundooNotesAPI.AzureFunctions.Users
         [OpenApiRequestBody(contentType: "application/json", bodyType: typeof(LoginCredentials), Required = true, Description = "New user details.")]
         [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "application/json", bodyType: typeof(LoginResponse), Description = "The OK response")]
         public async Task<IActionResult> UserLogin(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "user/login")] HttpRequest req)
+            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "users/login")] HttpRequest req)
         {
             string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
             dynamic data = JsonConvert.DeserializeObject<LoginCredentials>(requestBody);
@@ -62,12 +62,17 @@ namespace FundooNotesAPI.AzureFunctions.Users
 
         [FunctionName("ResetPassword")]
         [OpenApiOperation(operationId: "ResetPassword", tags: new[] { "Reset Password" })]
-        [OpenApiSecurity("function_key", SecuritySchemeType.ApiKey, Name = "email", In = OpenApiSecurityLocationType.Query)]
+        [OpenApiSecurity("BearerToken", SecuritySchemeType.ApiKey, Name = "token", In = OpenApiSecurityLocationType.Header)]
         [OpenApiRequestBody(contentType: "application/json", bodyType: typeof(LoginCredentials), Required = true, Description = "New user details.")]
         [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "text/plain", bodyType: typeof(string), Description = "The OK response")]
         public async Task<IActionResult> ResetPassword(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "user/reset")] HttpRequest req)
+            [HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "users")] HttpRequest req)
         {
+            var authResponse = _jWTService.ValidateJWT(req);
+            if (!authResponse.IsValid)
+            {
+                return new UnauthorizedResult();
+            }
             string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
             dynamic data = JsonConvert.DeserializeObject<LoginCredentials>(requestBody);
             var response = await _userService.UserLogin(data);
