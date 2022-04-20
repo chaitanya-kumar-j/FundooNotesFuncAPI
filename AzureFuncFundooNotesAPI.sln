@@ -9,7 +9,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FundooNotesAPI.Models", "do
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "FunctionApps", "FunctionApps", "{9FF22DB9-A21D-4550-B38C-D7275892DECA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FundooNotesAPI.AzureFunctions.Users", "dotnet\FunctionApps\FundooNotesAPI.AzureFunctions.Users\FundooNotesAPI.AzureFunctions.Users.csproj", "{3039180B-5DB8-4A6F-BE60-4877ABD85E16}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FundooNotesAPI.AzureFunctions.Users", "dotnet\FunctionApps\FundooNotesAPI.AzureFunctions.Users\FundooNotesAPI.AzureFunctions.Users.csproj", "{3039180B-5DB8-4A6F-BE60-4877ABD85E16}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FundooNotesAPI.AzureFunctions.Notes", "dotnet\FunctionApps\FundooNotesAPI.AzureFunctions.Notes\FundooNotesAPI.AzureFunctions.Notes.csproj", "{4AD05DA2-7260-4CAC-B06D-310F071E99CB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,12 +31,17 @@ Global
 		{3039180B-5DB8-4A6F-BE60-4877ABD85E16}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3039180B-5DB8-4A6F-BE60-4877ABD85E16}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3039180B-5DB8-4A6F-BE60-4877ABD85E16}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4AD05DA2-7260-4CAC-B06D-310F071E99CB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4AD05DA2-7260-4CAC-B06D-310F071E99CB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4AD05DA2-7260-4CAC-B06D-310F071E99CB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4AD05DA2-7260-4CAC-B06D-310F071E99CB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{3039180B-5DB8-4A6F-BE60-4877ABD85E16} = {9FF22DB9-A21D-4550-B38C-D7275892DECA}
+		{4AD05DA2-7260-4CAC-B06D-310F071E99CB} = {9FF22DB9-A21D-4550-B38C-D7275892DECA}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {98C8FE87-C728-423D-B2AD-D74B3BD3CCC1}

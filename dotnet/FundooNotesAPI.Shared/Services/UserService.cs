@@ -87,7 +87,7 @@ namespace FundooNotesAPI.Shared.Services
         #region User Registration
         public async Task<FundooUser> UserRegistration(FundooUser newUserDetails)
         {
-            if (string.IsNullOrEmpty(newUserDetails.UserId))
+            if (string.IsNullOrEmpty(newUserDetails.UserId) || newUserDetails.UserId == "string")
             {
                 newUserDetails.RegisteredAt = Convert.ToString(DateTime.Now);
                 newUserDetails.UserId = Guid.NewGuid().ToString();
@@ -121,7 +121,7 @@ namespace FundooNotesAPI.Shared.Services
                     throw new Exception("No Digital Main collection defined!");
 
                 var user = _cosmosContainer.GetItemLinqQueryable<FundooUser>(true)
-                     .Where(u => u.Email == userLoginDetails.Email)
+                     .Where(u => u.Email == userLoginDetails.Email && u.Password == userLoginDetails.Password)
                      .AsEnumerable()
                      .FirstOrDefault();
                 if (user == null)

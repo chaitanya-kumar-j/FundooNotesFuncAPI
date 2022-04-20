@@ -56,7 +56,10 @@ namespace FundooNotesAPI.AzureFunctions.Users
             string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
             dynamic data = JsonConvert.DeserializeObject<LoginCredentials>(requestBody);
             var response = await _userService.UserLogin(data);
-
+            if(response == null)
+            {
+                return new BadRequestObjectResult("No user with given login credentials. Email and/or password is not correct.");
+            }
             return new OkObjectResult(response);
         }
 

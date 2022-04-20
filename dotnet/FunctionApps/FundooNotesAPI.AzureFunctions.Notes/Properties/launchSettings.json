@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "FundooNotesAPI.AzureFunctions.Notes": {
+      "commandName": "Project",
+      "commandLineArgs": "host start --port 7072 --pause-on-error"
+    }
+  }
+}
