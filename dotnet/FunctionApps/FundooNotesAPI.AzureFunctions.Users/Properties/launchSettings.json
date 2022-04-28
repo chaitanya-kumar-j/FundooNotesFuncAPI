@@ -1,12 +1,12 @@
 {
   "profiles": {
-    "FundooNotesAPI.AzureFunctions.Notes": {
+    "FundooNotesAPI.AzureFunctions.Users": {
       "commandName": "Project"
     },
     "Docker": {
       "commandName": "Docker",
       "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}",
-      "httpPort": 30384,
+      "httpPort": 33505,
       "useSSL": false
     }
   }

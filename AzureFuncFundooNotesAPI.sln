@@ -8,10 +8,13 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FundooNotesAPI.Models", "dotnet\FundooNotesAPI.Models\FundooNotesAPI.Models.csproj", "{A6B7BBE6-40AF-43A5-9FB2-B9027FFB3ED3}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "FunctionApps", "FunctionApps", "{9FF22DB9-A21D-4550-B38C-D7275892DECA}"
+	ProjectSection(SolutionItems) = preProject
+		docker-compose.yml = docker-compose.yml
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FundooNotesAPI.AzureFunctions.Users", "dotnet\FunctionApps\FundooNotesAPI.AzureFunctions.Users\FundooNotesAPI.AzureFunctions.Users.csproj", "{3039180B-5DB8-4A6F-BE60-4877ABD85E16}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FundooNotesAPI.AzureFunctions.Notes", "dotnet\FunctionApps\FundooNotesAPI.AzureFunctions.Notes\FundooNotesAPI.AzureFunctions.Notes.csproj", "{4AD05DA2-7260-4CAC-B06D-310F071E99CB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FundooNotesAPI.AzureFunctions.Notes", "dotnet\FunctionApps\FundooNotesAPI.AzureFunctions.Notes\FundooNotesAPI.AzureFunctions.Notes.csproj", "{4AD05DA2-7260-4CAC-B06D-310F071E99CB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -42,12 +42,6 @@ namespace FundooNotesAPI.Shared.Services
             
         }
 
-        //**** PRIVATE METHODS ****//
-        private static string GetEnvironmentVariable(string name)
-        {
-            return Environment.GetEnvironmentVariable(name, EnvironmentVariableTarget.Process);
-        }
-
         public async Task<FundooNote> CreateFundooNote(string email, FundooNote newFundooNote)
         {
             if (string.IsNullOrEmpty(newFundooNote.NoteId) || newFundooNote.NoteId == "string" )
@@ -70,9 +64,23 @@ namespace FundooNotesAPI.Shared.Services
             }
         }
 
-        public Task<List<FundooNote>> DeleteFundooNoteById(string email, string id)
+        public async Task<FundooNote> DeleteFundooNoteById(string id)
         {
-            throw new NotImplementedException();
+            try
+            {
+                if (string.IsNullOrEmpty(_docDbDigitalMainCollectionName))
+                    throw new Exception("No Digital Main collection defined!");
+
+                FundooNote document = await _cosmosContainer.DeleteItemAsync<FundooNote>(id, new PartitionKey(id));
+
+               
+                return document;
+
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message, ex);
+            }
         }
 
         public async Task<List<FundooNote>> GetAllFundooNotes(string email)
@@ -122,9 +130,27 @@ namespace FundooNotesAPI.Shared.Services
             }
         }
 
-        public Task<FundooNote> UpdateFundooNote(string email, FundooNote updatedFundooNote)
+        public async Task<FundooNote> UpdateFundooNoteById(string id, FundooNote updatedFundooNote)
         {
-            throw new NotImplementedException();
+            try
+            {
+                if (string.IsNullOrEmpty(_docDbDigitalMainCollectionName))
+                    throw new Exception("No Digital Main collection defined!");
+
+                var document = await _cosmosContainer.ReadItemAsync<FundooNote>(id, new PartitionKey(id));
+                if(document == null)
+                {
+                    return null;
+                }
+                updatedFundooNote.NoteId = id;
+                var response = await _cosmosContainer.ReplaceItemAsync<FundooNote>(updatedFundooNote,id,new PartitionKey(id));
+                return response.Resource;
+
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message, ex);
+            }
         }
     }
 }

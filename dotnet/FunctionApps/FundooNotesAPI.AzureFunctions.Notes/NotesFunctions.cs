@@ -84,6 +84,49 @@ namespace FundooNotesAPI.AzureFunctions.Notes
             var response = _notesService.CreateFundooNote(authResponse.Email, data);
             return new OkObjectResult(response);
         }
+
+        [FunctionName("UpdateNote")]
+        [OpenApiOperation(operationId: "UpdateNote", tags: new[] { "Update Note" })]
+        [OpenApiSecurity("JWT Bearer Token", SecuritySchemeType.ApiKey, Name = "token", In = OpenApiSecurityLocationType.Header)]
+        [OpenApiParameter(name: "id", In = ParameterLocation.Path, Required = true, Type = typeof(string), Description = "The id parameter")]
+        [OpenApiRequestBody(contentType: "application/json", bodyType: typeof(FundooNote), Required = true, Description = "Updated note details.")]
+        [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "application/json", bodyType: typeof(FundooNote), Description = "The OK response")]
+        public async Task<IActionResult> UpdateNote(
+            [HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "notes/{id}")] HttpRequest req, string id)
+        {
+            var authResponse = _jwtService.ValidateJWT(req);
+            if (!authResponse.IsValid)
+            {
+                return new UnauthorizedResult();
+            }
+
+            string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
+            dynamic data = JsonConvert.DeserializeObject<FundooNote>(requestBody);
+
+            var response = _notesService.UpdateFundooNoteById(id, data);
+            return new OkObjectResult(response);
+        }
+
+        [FunctionName("DeleteNote")]
+        [OpenApiOperation(operationId: "DeleteNote", tags: new[] { "Delete Note" })]
+        [OpenApiSecurity("JWT Bearer Token", SecuritySchemeType.ApiKey, Name = "token", In = OpenApiSecurityLocationType.Header)]
+        [OpenApiParameter(name: "id", In = ParameterLocation.Path, Required = true, Type = typeof(string), Description = "The id parameter")]
+        [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "application/json", bodyType: typeof(FundooNote), Description = "The OK response")]
+        public async Task<IActionResult> DeleteNote(
+            [HttpTrigger(AuthorizationLevel.Anonymous, "delete", Route = "notes/{id}")] HttpRequest req, string id)
+        {
+            var authResponse = _jwtService.ValidateJWT(req);
+            if (!authResponse.IsValid)
+            {
+                return new UnauthorizedResult();
+            }
+
+            string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
+            dynamic data = JsonConvert.DeserializeObject<FundooNote>(requestBody);
+
+            var response = _notesService.DeleteFundooNoteById(id);
+            return new OkObjectResult(response);
+        }
     }
 }
 

@@ -1,0 +1,21 @@
+version: '3.4'
+
+networks:
+  fundoonotes:
+    external:
+      name: fundoonotes
+
+services:
+  usersservice:
+    image: ${DOCKER_REGISTRY-}fundoonotesapiazurefunctionsusers:dev
+    ports:
+      - 4321:80
+    networks:
+      - fundoonotes
+ 
+  notesservice:
+    image: ${DOCKER_REGISTRY-}fundoonotesapiazurefunctionsnotes:dev
+    ports:
+      - 4322:80
+    networks:
+      - fundoonotes

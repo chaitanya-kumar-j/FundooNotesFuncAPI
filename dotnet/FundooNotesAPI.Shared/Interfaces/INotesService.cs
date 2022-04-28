@@ -15,8 +15,8 @@ namespace FundooNotesAPI.Shared.Interfaces
 
         Task<FundooNote> CreateFundooNote(string email, FundooNote newFundooNote);
 
-        Task<FundooNote> UpdateFundooNote(string email, FundooNote updatedFundooNote);
+        Task<FundooNote> UpdateFundooNoteById(string id, FundooNote updatedFundooNote);
 
-        Task<List<FundooNote>> DeleteFundooNoteById(string email, string id);
+        Task<FundooNote> DeleteFundooNoteById(string id);
     }
 }
